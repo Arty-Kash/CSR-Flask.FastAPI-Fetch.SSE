@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Web App</title>
+</head>
+<body>
+
+    <h1>Flask + JavaScript 連携テスト</h1>
+    
+    <!-- ここにバックエンドからの文字を表示します -->
+    <div id="display-area" style="padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9;">
+        データを読み込み中...
+    </div>
+
+    <button id="update-button">データを再取得</button>
+
+    <script>
+        // バックエンドからデータを取得する関数
+        async function fetchData() {
+            try {
+                // Flaskの /api/data にリクエストを送る
+                const response = await fetch('/api/data');
+                const data = await response.json();
+
+                // 取得したデータ（message）を画面に表示する
+                document.getElementById('display-area').innerText = data.message;
+            } catch (error) {
+                console.error('エラーが発生しました:', error);
+                document.getElementById('display-area').innerText = '通信エラーが発生しました';
+            }
+        }
+
+        // ページが読み込まれた時に実行
+        window.onload = fetchData;
+
+        // ボタンを押した時にも実行
+        document.getElementById('update-button').addEventListener('click', fetchData);
+    </script>
+</body>
+</html>
