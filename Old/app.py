@@ -1,36 +1,21 @@
-# Flask & FastAPI バージョン　2026.4.
+# Flaskバージョン　2026.3.25
 
-# Flask     from flask import Flask, render_template, jsonify
-# Fast API
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
-import uvicorn
-
+from flask import Flask, render_template, jsonify
 from datetime import datetime, timedelta, timezone # 現在時刻を取得するためのモジュールを追加
 
-# Flask     app = Flask(__name__)
-# FastAPI
-app = FastAPI()
-
+app = Flask(__name__)
 
 # 1. 最初にページを表示するためのルート
-
-# Flask     @app.route('/') 
-# Fast API
-@app.get("/")
-
+@app.route('/') 
 def index():
     # templatesフォルダ内のindex.htmlを探してブラウザに返す
-    # Flask     return render_template('index.html')
-    # FastAPI
-    return FileResponse('templates/index.html')
+    return render_template('index.html')
 
 # 2. フロントエンド（JS）から呼ばれる、データを送るためのルート
-# Flask     @app.route('/api/data')    # /api/data というURLにアクセスがあった時に、下の関数を実行するように設定
-# Fast API
-@app.get("/api/data")
-
+@app.route('/api/data')    # /api/data というURLにアクセスがあった時に、下の関数を実行するように設定
 def get_data():
+
+
     # 1. 日本標準時（JST）のタイムゾーンを設定 (UTCから+9時間)
     jst = timezone(timedelta(hours=9))
     
@@ -47,9 +32,8 @@ def get_data():
 """
 
     # 取得した時刻の文字列をJSON形式で返却
-    # Flask     return jsonify({"message": now_time})
-    # Fast API
-    return {"message": now_time}
+    return jsonify({"message": now_time})
+
 
 """　単なる文字列データの送信
     data = {
@@ -60,7 +44,4 @@ def get_data():
 """
 
 if __name__ == '__main__':
-    # サーバを起動
-    # Flask     app.run(debug=True)
-    # FastAPI
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    app.run(debug=True)
