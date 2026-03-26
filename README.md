@@ -8,7 +8,8 @@ template for Client Side Rendering
 ・FastAPIで実行：bash, pip install fastapi uvicorn, python app.py コマンドを実行後、発行されたURLにアクセス  
 
 
-・通信方式を、FetchからSSEに変更
+・通信方式を、FetchからSSEに変更  
+・ターミナルでのコマンド実行は、FastAPIと変わらず bash, pip install fastapi uvicorn, python app.py
 
 
 
