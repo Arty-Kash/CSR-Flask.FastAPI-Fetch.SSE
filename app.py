@@ -6,6 +6,10 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 import uvicorn
 
+# SSE
+from fastapi.responses import StreamingResponse
+import asyncio  # 非同期処理のためのモジュール
+
 from datetime import datetime, timedelta, timezone # 現在時刻を取得するためのモジュールを追加
 
 # Flask     app = Flask(__name__)
@@ -28,11 +32,31 @@ def index():
     # FastAPIで単純なHTMLファイルを送る場合は FileResponse を使うのが手軽
     return FileResponse('templates/index.html')
 
+
+# SSE用のジェネレータ関数（サーバーからデータを送り続ける仕組み）
+async def event_generator():
+    while True:
+        # 1. 日本標準時（JST）の時刻取得
+        jst = timezone(timedelta(hours=9))
+        now_time = datetime.now(jst).strftime("%Y-%m-%d %H:%M:%S")
+        
+        # 2. SSEの形式（"data: メッセージ\n\n"）でデータを送信
+        yield f"data: {now_time}\n\n"
+        
+        # 3. 1秒待機
+        await asyncio.sleep(1)
+
 # 2. フロントエンド（JS）から呼ばれる、データを送るためのルート
 # Flask     @app.route('/api/data')    # /api/data というURLにアクセスがあった時に、下の関数を実行するように設定
 # FastAPI　FastAPIでは、GETメソッドであることを明示的に書くのが一般的
 @app.get("/api/data")
+async def get_data():
+    # StreamingResponseを使い、media_typeを "text/event-stream" に設定することでSSEとして動作させる
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
+
+"""
+@app.get("/api/data")
 def get_data():
     # 1. 日本標準時（JST）のタイムゾーンを設定 (UTCから+9時間)
     jst = timezone(timedelta(hours=9))
@@ -53,6 +77,7 @@ def get_data():
     # Flask     return jsonify({"message": now_time})
     # FastAPI  FastAPIでは辞書型を返すと自動的にJSONに変換されます
     return {"message": now_time}
+"""
 
     """　単なる文字列データの送信
     data = {
